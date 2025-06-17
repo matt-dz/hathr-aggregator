@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: update-plays
+  namespace: hathr
+spec:
+  # run at minute 0 and 30 of every hour
+  schedule: "*/30 * * * *"
+  # keep the last 3 successful and last 1 failed jobs around (adjust as needed)
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      # retry up to 3 times before marking Job as failed
+      backoffLimit: 3
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: update-plays
+              image: matthew10125/hathr-aggregator:latest
